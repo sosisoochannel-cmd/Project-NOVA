@@ -12,6 +12,7 @@ namespace ProjectFootball
         private Rigidbody body;
         private static FootballPlayer selectedPlayer;
         private const float MoveSpeed = 6.8f;
+        private Vector2 touchInput;
 
         public void Initialize(bool isHome, int shirtNumber)
         {
@@ -26,6 +27,7 @@ namespace ProjectFootball
             if (!IsHome || !IsSelected) return;
 
             Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            if (touchInput.sqrMagnitude > .01f) input = touchInput;
             if (input.sqrMagnitude > 1f) input.Normalize();
             Vector3 direction = new Vector3(input.x, 0f, input.y);
 
@@ -42,9 +44,9 @@ namespace ProjectFootball
         {
             if (!IsHome || !IsSelected || body == null) return;
             Vector2 input = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+            if (touchInput.sqrMagnitude > .01f) input = touchInput;
             if (input.sqrMagnitude > 1f) input.Normalize();
-            Vector3 velocity = new Vector3(input.x * MoveSpeed, body.linearVelocity.y, input.y * MoveSpeed);
-            body.linearVelocity = velocity;
+            body.linearVelocity = new Vector3(input.x * MoveSpeed, body.linearVelocity.y, input.y * MoveSpeed);
         }
 
         private void Select()
@@ -61,6 +63,27 @@ namespace ProjectFootball
             Vector3 forward = transform.forward;
             if (forward.sqrMagnitude < .1f) forward = Vector3.forward;
             ball.Kick(forward * 12.5f + Vector3.up * 2.2f);
+        }
+
+        private void OnGUI()
+        {
+            if (!IsHome || !IsSelected) return;
+
+            GUI.Label(new Rect(12f, 12f, 280f, 28f), "PROJECT FOOTBALL  |  PLAYER 10");
+
+            float left = 22f;
+            float bottom = Screen.height - 150f;
+            float size = 58f;
+            bool up = GUI.RepeatButton(new Rect(left + size, bottom, size, size), "▲");
+            bool down = GUI.RepeatButton(new Rect(left + size, bottom + size * 1.45f, size, size), "▼");
+            bool goLeft = GUI.RepeatButton(new Rect(left, bottom + size * .72f, size, size), "◀");
+            bool goRight = GUI.RepeatButton(new Rect(left + size * 2f, bottom + size * .72f, size, size), "▶");
+
+            touchInput = new Vector2((goRight ? 1f : 0f) - (goLeft ? 1f : 0f),
+                                     (up ? 1f : 0f) - (down ? 1f : 0f));
+
+            if (GUI.Button(new Rect(Screen.width - 128f, Screen.height - 118f, 108f, 94f), "KICK"))
+                KickBall();
         }
     }
 }
