@@ -1,0 +1,44 @@
+name: Unity Android Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'Assets/**'
+      - 'Packages/**'
+      - 'ProjectSettings/**'
+      - '.github/workflows/android-build.yml'
+
+jobs:
+  build-android:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Build project
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
+        with:
+          projectPath: .
+          unityVersion: 6000.3.24f1
+          targetPlatform: Android
+          buildsPath: build
+          buildName: ProjectFootball
+          androidAppBundle: false
+          androidTargetSdkVersion: AndroidApiLevelAuto
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProjectFootball-Android-APK
+          path: build/Android/**/*.apk
+          if-no-files-found: error
+          retention-days: 14
