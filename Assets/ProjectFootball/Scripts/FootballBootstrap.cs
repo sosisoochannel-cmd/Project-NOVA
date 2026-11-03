@@ -107,7 +107,6 @@ namespace ProjectFootball
         {
             var ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
             ball.name = "MatchBall";
-            ball.tag = "Ball";
             ball.transform.position = new Vector3(0f, .35f, 0f);
             ball.transform.localScale = Vector3.one * .44f;
             ball.GetComponent<Renderer>().material = Material(Color.white);
