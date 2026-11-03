@@ -182,7 +182,7 @@ namespace ProjectFootball
                 float distanceSquared = PlanarDistanceSquared(focus, player.transform.position);
                 if (distanceSquared <= radiusSquared)
                 {
-                    spread = Mathf.Max(spread, Mathf.Sqrt(distanceSquared) * 0.72f);
+                    spread = Mathf.Max(spread, Mathf.Sqrt(distanceSquared));
                 }
             }
 
