@@ -158,9 +158,19 @@ namespace ProjectFootball
         {
             var cameraObject = new GameObject("BroadcastCamera");
             var camera = cameraObject.AddComponent<Camera>();
-            camera.fieldOfView = 48f;
-            camera.nearClipPlane = .1f;
-            camera.farClipPlane = 250f;
+
+            // Clean broadcast image with anti-aliased pitch lines and silhouettes.
+            camera.fieldOfView = 42f;
+            camera.nearClipPlane = .3f;
+            camera.farClipPlane = 400f;
+            camera.allowHDR = true;
+            camera.allowMSAA = true;
+            camera.useOcclusionCulling = true;
+
+            // 4x MSAA improves the edges of players, goal frames and field markings.
+            QualitySettings.antiAliasing = 4;
+
+            cameraObject.transform.position = new Vector3(-60f, 30f, -7f);
             cameraObject.AddComponent<AudioListener>();
             cameraObject.AddComponent<BroadcastCamera>();
         }
